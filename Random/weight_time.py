@@ -9,7 +9,7 @@ with open(r"C:\Users\Tom.Brooks\OneDrive - BJSS Ltd\Documents\Coding\Random\weig
         new_dict[line_count] = row
         line_count += 1
 
-print(new_dict)
+#print(new_dict)
 
 class RunningTime:
     def __init__(self, time, date, weight):
@@ -19,7 +19,7 @@ class RunningTime:
 
 #tested and class initialisation works
 #time1 = RunningTime("00:29:21", "28/11/2022", "113.7")
-#print(time1.date)
+#print(time1.time)
 
 #format data so time is time, date is date, weight is int
 
@@ -32,8 +32,4 @@ class RunningTime:
 #write the sentences to a txt file and export it?
 
 #write the time per weight as a new column inside the original CSV?
-
-
-
-
 
