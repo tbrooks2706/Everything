@@ -4,59 +4,71 @@ from datetime import date, datetime, time
 with open(r"C:\Users\Tom.Brooks\OneDrive - BJSS Ltd\Documents\Coding\Random\weight_time2.csv") as new_csv:
     csv_obj = csv.DictReader(new_csv)
     line_count = 0
-    new_dict = {}
+    csv_dict = {}
     for row in csv_obj:
-        new_dict[line_count] = row
+        csv_dict[line_count] = row
         line_count += 1
 
 #print(new_dict[0].values())
-set1 = list(new_dict[0].values())
-print(set1)
-def clean_data(dictionary):
-    for key, value in dictionary.items():
-        #print(value)
-        for key, value in value.items():
-            if key == "weight":
-                value = int(value)
-            elif key == "time":
-                newval = datetime.strptime(value, "%H:%M:%S").time()
-                value = newval
-            elif key == "date":
-                newval = datetime.strptime(value, "%d/%m/%Y").date()
-                value = newval
-                #print(value.day())
-            else:
-                value = value
-            #print(type(value))
-    #print(dictionary)
-clean_data(new_dict)
-
-class RunningTime:
-    def __init__(self, time, date, weight):
-        self.time = time
-        self.date = date
-        self.weight = weight
-
-#running_time_1 = RunningTime(new_dict)
-
-#tested and class initialisation works
-# time1 = RunningTime("00:29:21", "28/11/2022", "113.7")
-# print(time1.time)
+#set1 = list(csv_dict[0].values())
+#print(set1)
 
 #format data so time is time, date is date, weight is int
-#DONE
+def clean_data(dictionary):
+    new_dict = {}
+    for key, value in dictionary.items():
+        for k, x in value.items():
+            value[k] = 0
+            if k == "weight":
+                value[k] = int(x)
+            elif k == "time":
+                newval = datetime.strptime(x, "%H:%M:%S").time()
+                value[k] = newval
+            elif k == "date":
+                newval = datetime.strptime(x, "%d/%m/%Y").date()
+                value[k] = newval
+            else:
+                value[k] = x
+        new_dict[key] = value
+    return new_dict
+clean_dict = clean_data(csv_dict)
 
-#create time items as objects of RunningTime class (as per time1 above)
-#CAN'T DO THIS - ABANDONING OOP - can't figure out a way to create a new variable of this class, for each iteration in the dictionary
+#prints out all the times, dates, weights - depending on input
+def print_data(dictionary, string):
+    for key, value in dictionary.items():
+        running_time = dictionary[key]
+        for key, value in running_time.items():
+            if key == string:
+                print(value,",",type(value))
 
-#create function for time per weight inside class
+#calculate time per weight
+#   BUT should really output the full dictionary with the mins per kg added, rather than a new mini dictionary
+#   this will allow the other details to be used in the print_results function further down
+def calculate_time_per_weight(dictionary):
+    tpw_dict = {}
+    for key, value in dictionary.items():
+        running_time = dictionary[key]
+        new_key = running_time["date"]
+        time_obj = running_time["time"]
+        minutes = time_obj.minute + (time_obj.second / 60)
+        tpw = minutes / running_time["weight"]
+        tpw_dict[new_key] = tpw
+    return tpw_dict
+mins_per_kg = calculate_time_per_weight(clean_dict)
+print(mins_per_kg)
 
 #do some kind of print as part of a sentence "At DATE, your time was X per kg"
+def print_results(dictionary):
+    for key, value in dictionary.items():
+        date = key.strftime("%d/%m/%Y")
+        print("On "+str(date)+", you ran at "+str(value)+" mins per kg.")
+print_results(mins_per_kg)       
 
 #write the sentences to a txt file and export it?
 
 #write the time per weight as a new column inside the original CSV?
 
+#How to use date functions - syntax
 #x = date(2020, 5, 8)
 #y = x.replace(year=2009, day=9)
 #z = x.month
