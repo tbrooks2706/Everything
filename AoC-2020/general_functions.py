@@ -48,3 +48,5 @@ def print_grid(input_list, rotate=False):
             for column in row:
                 row_string += str(column)
             print(row_string)
+
+alphabet = "abcdefghijklmnopqrstuvwxyz"

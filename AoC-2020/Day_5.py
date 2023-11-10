@@ -122,23 +122,6 @@ class BoardingPass:
             return top
         return [bottom, top]   
 
-# tests = [[0, 127], [0, 63], [32, 63], [32, 47], [40, 47], [44, 47], [44, 45]]
-# e_top = [[64, 127], [32, 63], [48, 63], [40, 47], [44, 47], [46, 47], 45]
-# e_btm = [[0, 63], [0, 31], [32, 47], [32, 39], [40, 43], [44, 45], 44]
-
-# for num in range(len(tests)):
-#     test = tests[num]
-#     expected = e_top[num]
-#     actual = keep_top_half(tests[num])
-#     result = expected == actual
-#     print("Test:", test, ", Expected:", expected, ", Actual:", actual, "Result:", result)
-
-# string = "BBFFBBFRLL"
-# example_pass = BoardingPass(string)
-# print_output = [string, example_pass.row, example_pass.column, example_pass.seat_id]
-# print_string = "Boarding Pass: %s, Row: %d, Column: %d, SeatID: %d"
-# print(print_string % (string, example_pass.row, example_pass.column, example_pass.seat_id))
-
 def highest_seat_id(input_list):
     id = 0
     for string in input_list:
@@ -149,68 +132,25 @@ def highest_seat_id(input_list):
 
 def find_my_seat(input_list):
     this_plane = Plane(input_list)
-    print(this_plane.seat_list)
-    start = 0
-    finish = 0
-    # ignore_values = []
-    prev_seat = 0
-    ind = 0
-    for num in range(len(this_plane.seat_list)):
-        if num != this_plane.seat_list[num]:
-            print(num, this_plane.seat_list[num])
-    # for seat in this_plane.seat_list:
-    #     if seat == None:
-    #         continue
-    #     start = seat
-    #     break
-    # for seat in reversed(this_plane.seat_list):
-    #     if seat == None:
-    #         continue
-    #     finish = seat
-    #     break
-    # for seat in this_plane.seat_list:
-        # if seat != None:
-        #     if this_plane.first_seat_id <= seat <= this_plane.last_seat_id:
-        #         print(seat)
-        # if seat == None:
-        #     my_id = next_seat - 1
-        #     break
-    #my_id = 0
-    #return my_id        
-    # for lst in this_plane.seat_plan_full.values():
-    #     #print(lst)
-    #     if 
-    #     for seat in lst:
-    #         counter += 1
-    #         if seat != None:
-    #             start = seat
-    #             break
-    #     break
-    # print(start)
-    # print(finish)
+    first_entry = this_plane.seat_list[0]
+    last_entry = this_plane.seat_list[-1]
+    while first_entry == None:
+        this_plane.seat_list.pop(0)
+        first_entry = this_plane.seat_list[0]
+    while last_entry == None:
+        this_plane.seat_list.pop(-1)
+        last_entry = this_plane.seat_list[-1]
+    for seat in this_plane.seat_list:
+        if seat == None:
+            return prev_seat + 1
+        prev_seat = seat
 
-    #start number
-    #finish number
-    #if > start and < finish
-        #temp key, temp col
-        #if value = None, row = temp key, col = temp col
-    
-    #print([key for key, value in this_plane.seat_plan_full.items() if value == 704])
-    #this works below, so its definitely ints stored in dict
-    #print(this_plane.seat_plan_full[88][0] == 704)
-
-#########row 79##########
-
-    
-
-
-init_list = general_functions.read_file(r"C:\Users\Tom.Brooks\OneDrive - BJSS Ltd\Documents\Coding\Coding\AoC-2020\Day_5.txt")
+init_list = general_functions.read_file(r"C:\Users\Tom.Brooks\OneDrive - BJSS Ltd\Documents\Coding\AoC\AoC-2020\Day_5.txt")
 
 #answer part 1
 part_1 = highest_seat_id(init_list)
-#print(part_1)
+print(part_1)
 
 #answer part 2
 part_2 = find_my_seat(init_list)
-#print(part_2)
-
+print(part_2)
