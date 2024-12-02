@@ -62,4 +62,3 @@ print(part_1)
 
 part_2 = find_similarity_score(id_list_a, id_list_b)
 print(part_2)
-
