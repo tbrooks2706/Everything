@@ -1,64 +1,117 @@
 import general_functions
-from collections import Counter
+from copy import deepcopy
 
-#https://adventofcode.com/2024/day/1
+#https://adventofcode.com/2024/day/2
 
 #summary and instructions
-#puzzle input is two lists held up side by side - they should be the same
-#find out how far apart the lists are
-#pair up the smallest number in list A with smallest in list B, regardless of position in list
-#find out difference (all positive regardless of which side is bigger)
-#do the same for second smallest in A with second smallest in B
-#add up all differences - answer part 1
+#puzzle input is a set of reports, one report per line
+#each line is a list of numbers called levels, separated by spaces
+#work out how many reports are safe
+#a report is safe if:
+    #levels are all increasing (12789) or all decreasing (86421); AND
+    #any two adjacent levels differ by 1-3 (so no duplicates and none more than 3 apart)
 
-def split_lists(input_list):
-    list_a = []
-    list_b = []
+class ReportSet:
+    def __init__(self, input_list) -> None:
+        self.original = input_list
+        self.variations = self.find_variations()
+        self.any_safe = self.test_variations()
+
+    def find_variations(self):
+        ind = 0
+        var_list = [self.original]
+        for num in self.original:
+            orig = deepcopy(self.original)
+            orig.pop(ind)
+            variation = orig
+            var_list.append(variation)
+            ind += 1
+        return var_list
+
+    def test_variations(self):
+        any_true = False
+        for var in self.variations:
+            this_report = Report(var)
+            if this_report.is_safe == True:
+                any_true = True
+                break
+        return any_true
+
+class Report:
+    def __init__(self, input_list) -> None:
+        self.report = input_list
+        self.inc_dec_results = self.check_direction()
+        self.is_increasing = self.inc_dec_results[0]
+        self.is_decreasing = self.inc_dec_results[1]
+        self.diff_match = self.check_diff()
+        self.is_safe = self.check_safe()
     
-    def clean_list(input):
-        clean_list = []
-        for item in input:
-            clean_item = [x for x in item.split("   ")]
-            clean_list.append(clean_item)
-        return clean_list
+    def check_direction(self):
+        inc = True
+        dec = True
+        ind = 1
+        for level in self.report:
+            if ind > len(self.report) - 1:
+                break
+            step = self.report[ind] - self.report[ind-1]
+            ind += 1
+            if step <= 0:
+                inc = False
+            if step >= 0:
+                dec = False
+            if inc == False and dec == False:
+                break
+        return (inc, dec)
     
-    def populate_a_and_b(input):
-        for pair in input:
-            list_a.append(int(pair[0]))
-            list_b.append(int(pair[1]))
+    def check_diff(self):
+        diff = True
+        ind = 1
+        while ind < len(self.report):
+            level_diff = abs(self.report[ind] - self.report[ind-1])
+            if 1 <= level_diff <= 3:
+                ind += 1
+                continue
+            else:
+                diff = False
+                break
+        return diff
     
-    populate_a_and_b(clean_list(input_list))
-    list_a.sort()
-    list_b.sort()
-    return [list_a, list_b]
+    def check_safe(self):
+        safe = True
+        if (self.is_increasing == True or self.is_decreasing == True) and self.diff_match == True:
+            pass
+        else:
+            safe = False
+        return safe
 
-def find_difference(list_a, list_b):
-    diff_list = []
-    ind = 0
-    for item in list_a:
-        diff = abs(list_a[ind] - list_b[ind])
-        diff_list.append(diff)
-        ind += 1
-    total_diff = sum(diff_list)
-    return total_diff
+def check_reports_1(input_list):
+    count_safe = 0
+    for report in input_list:
+        this_report = Report(report)
+        if this_report.is_safe == True:
+            count_safe += 1
+    return count_safe
 
-def find_similarity_score(list_a, list_b):
-    sim_list = []
-    ind = 0
-    b_counts = Counter(list_b)
-    for item in list_a:
-        sim_list.append(b_counts[item] * item)
-        ind += 1
-    total_score = sum(sim_list)
-    return total_score    
+def check_reports_2(input_list):
+    count_safe = 0
+    for report in input_list:
+        this_set = ReportSet(report)
+        if this_set.any_safe == True:
+            count_safe += 1
+    return count_safe
 
-init_list = general_functions.read_file(r"C:\Users\tbroo\OneDrive\Documents\Code\Everything\AoC-2024\Day_1.txt")
-id_list_a = split_lists(init_list)[0]
-id_list_b = split_lists(init_list)[1]
+def clean_reports(input_list):
+    clean = []
+    for report in input_list:
+        clean.append([int(x) for x in report.split(" ")])
+    return clean
+
+init_list = general_functions.read_file(r"C:\Users\tbroo\OneDrive\Documents\Code\Everything\AoC-2024\Day_2.txt")
+clean_list = clean_reports(init_list)
 
 #answers
-part_1 = find_difference(id_list_a, id_list_b)
+part_1 = check_reports_1(clean_list)
 print(part_1)
 
-part_2 = find_similarity_score(id_list_a, id_list_b)
+part_2 = check_reports_2(clean_list)
 print(part_2)
